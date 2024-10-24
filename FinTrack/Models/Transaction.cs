@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinTrack.Models;
 
+public enum TransactionType
+{
+    Income,  
+    Expense
+}
+
 public class Transaction
 {
     [Key]
@@ -16,5 +22,8 @@ public class Transaction
     public Category Category { get; set; } 
 
     public int UserId { get; set; } 
-    public User User { get; set; } 
+    public User User { get; set; }
+
+    public TransactionType TransactionType { get; set; }  
+
 }

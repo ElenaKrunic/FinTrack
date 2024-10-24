@@ -79,18 +79,13 @@ public class CategoryController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutCategory(int id, [FromBody] CategoryDTO categoryDto)
     {
-        if (id != categoryDto.Id)
-        {
-            return BadRequest();
-        }
-
+       
         var category = await _context.Categories.FindAsync(id);
         if (category == null)
         {
             return NotFound();
         }
 
-        // Update fields from DTO
         category.Name = categoryDto.Name;
 
         _context.Entry(category).State = EntityState.Modified;

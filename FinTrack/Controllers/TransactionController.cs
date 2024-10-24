@@ -88,8 +88,9 @@ public class TransactionController : ControllerBase
             Description = transactionDto.Description,
             CategoryId = transactionDto.CategoryId,
             UserId = transactionDto.UserId,
-            Category = category, 
-            User = user 
+            Category = category,
+            User = user,
+            TransactionType = transactionDto.TransactionType
         };
 
         _context.Transactions.Add(transaction);
@@ -101,22 +102,36 @@ public class TransactionController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> PutTransaction(int id, TransactionDTO transactionDto)
     {
-        if (id != transactionDto.UserId) // Assuming you meant to check the id against the DTO's ID
-        {
-            return BadRequest();
-        }
-
         var transaction = await _context.Transactions.FindAsync(id);
         if (transaction == null)
         {
             return NotFound();
         }
 
-        transaction.Amount = transactionDto.Amount;
-        transaction.Date = transactionDto.Date;
-        transaction.Description = transactionDto.Description;
-        transaction.CategoryId = transactionDto.CategoryId;
-        transaction.UserId = transactionDto.UserId;
+        if (transactionDto.Amount != default)
+        {
+            transaction.Amount = transactionDto.Amount;
+        }
+        if (transactionDto.Date != default(DateTime))
+        {
+            transaction.Date = transactionDto.Date;
+        }
+        if (!string.IsNullOrEmpty(transactionDto.Description))
+        {
+            transaction.Description = transactionDto.Description;
+        }
+        if (transactionDto.CategoryId != default)
+        {
+            transaction.CategoryId = transactionDto.CategoryId;
+        }
+        if (transactionDto.UserId != default)
+        {
+            transaction.UserId = transactionDto.UserId;
+        }
+        if (transactionDto.TransactionType != default)
+        {
+            transaction.TransactionType = transactionDto.TransactionType;
+        }
 
         _context.Entry(transaction).State = EntityState.Modified;
 
@@ -152,6 +167,26 @@ public class TransactionController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    [HttpGet("totalIncome/{userId}")]
+    public async Task<ActionResult<decimal>> GetTotalIncome(int userId)
+    {
+        var totalIncome = await _context.Transactions
+            .Where(t => t.TransactionType == TransactionType.Income && t.UserId == userId)
+            .SumAsync(t => t.Amount);
+
+        return Ok(totalIncome);
+    }
+
+    [HttpGet("totalExpenses/{userId}")]
+    public async Task<ActionResult<decimal>> GetTotalExpenses(int userId)
+    {
+        var totalExpenses = await _context.Transactions
+            .Where(t => t.TransactionType == TransactionType.Expense && t.UserId == userId)
+            .SumAsync(t => t.Amount);
+
+        return Ok(totalExpenses);
     }
 
     private bool TransactionExists(int id)
