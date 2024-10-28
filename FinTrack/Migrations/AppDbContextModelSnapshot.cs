@@ -52,6 +52,9 @@ namespace FinTrack.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 

@@ -1,4 +1,6 @@
-﻿namespace FinTrack.DTOs;
+﻿using FinTrack.Models;
+
+namespace FinTrack.DTOs;
 
 public class TransactionDTO
 {
@@ -7,4 +9,6 @@ public class TransactionDTO
     public string Description { get; set; }
     public int CategoryId { get; set; }
     public int UserId { get; set; }
+    public TransactionType TransactionType { get; set; } 
+
 }
