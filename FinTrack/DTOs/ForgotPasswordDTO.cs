@@ -1,7 +1,6 @@
 ﻿namespace FinTrack.DTOs;
 
-public class UserLoginDTO
+public class ForgotPasswordDTO
 {
     public string Email { get; set; }
-    public string Password { get; set; }
 }
