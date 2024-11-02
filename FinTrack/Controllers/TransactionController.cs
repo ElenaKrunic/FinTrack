@@ -193,4 +193,25 @@ public class TransactionController : ControllerBase
     {
         return _context.Transactions.Any(e => e.Id == id);
     }
+
+    [HttpGet("monthlyReport/{userId}")]
+    public async Task<ActionResult<IEnumerable<object>>> GetMonthlyReport(int userId)
+    {
+        var monthlyReport = await _context.Transactions
+            .Where(t => t.UserId == userId)
+            .GroupBy(t => new { t.Date.Year, t.Date.Month })
+            .Select(g => new
+            {
+                Year = g.Key.Year,
+                Month = g.Key.Month,
+                TotalIncome = g.Where(t => t.TransactionType == TransactionType.Income).Sum(t => t.Amount),
+                TotalExpense = g.Where(t => t.TransactionType == TransactionType.Expense).Sum(t => t.Amount)
+            })
+            .OrderBy(r => r.Year)
+            .ThenBy(r => r.Month)
+            .ToListAsync();
+
+        return Ok(monthlyReport);
+    }
+
 }
