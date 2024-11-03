@@ -2,6 +2,7 @@
 using FinTrack.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinTrack.Controllers;
 
@@ -192,5 +193,47 @@ public class TransactionController : ControllerBase
     private bool TransactionExists(int id)
     {
         return _context.Transactions.Any(e => e.Id == id);
+    }
+
+    [HttpGet("filter")]
+    public async Task<ActionResult<IEnumerable<TransactionDTO>>> FilterTransactions(int userId, int? categoryId = null, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var query = _context.Transactions
+            .Include(t => t.Category)
+            .Include(t => t.User)
+            .Where(t => t.UserId == userId)
+            .AsQueryable();
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(t => t.CategoryId == categoryId.Value);
+        }
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            query = query.Where(t => t.Date >= startDate.Value && t.Date <= endDate.Value);
+        }
+        else if (startDate.HasValue)
+        {
+            query = query.Where(t => t.Date >= startDate.Value);
+        }
+        else if (endDate.HasValue)
+        {
+            query = query.Where(t => t.Date <= endDate.Value);
+        }
+
+        var transactions = await query.ToListAsync();
+
+        var transactionDtos = transactions.Select(t => new TransactionDTO
+        {
+            Amount = t.Amount,
+            Date = t.Date,
+            Description = t.Description,
+            CategoryId = t.CategoryId,
+            UserId = t.UserId,
+            TransactionType = t.TransactionType
+        }).ToList();
+
+        return Ok(transactionDtos);
     }
 }
