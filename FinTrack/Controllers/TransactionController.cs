@@ -201,8 +201,7 @@ public class TransactionController : ControllerBase
         var query = _context.Transactions
             .Include(t => t.Category)
             .Include(t => t.User)
-            .Where(t => t.UserId == userId)
-            .AsQueryable();
+            .Where(t => t.UserId == userId);
 
         if (categoryId.HasValue)
         {
@@ -222,9 +221,7 @@ public class TransactionController : ControllerBase
             query = query.Where(t => t.Date <= endDate.Value);
         }
 
-        var transactions = await query.ToListAsync();
-
-        var transactionDtos = transactions.Select(t => new TransactionDTO
+        var transactionDtos = await query.Select(t => new TransactionDTO
         {
             Amount = t.Amount,
             Date = t.Date,
@@ -232,7 +229,7 @@ public class TransactionController : ControllerBase
             CategoryId = t.CategoryId,
             UserId = t.UserId,
             TransactionType = t.TransactionType
-        }).ToList();
+        }).ToListAsync();
 
         return Ok(transactionDtos);
     }
