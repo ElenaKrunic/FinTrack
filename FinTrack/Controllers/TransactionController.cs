@@ -2,6 +2,7 @@
 using FinTrack.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FinTrack.Controllers;
 
@@ -194,24 +195,45 @@ public class TransactionController : ControllerBase
         return _context.Transactions.Any(e => e.Id == id);
     }
 
-    [HttpGet("monthlyReport/{userId}")]
-    public async Task<ActionResult<IEnumerable<object>>> GetMonthlyReport(int userId)
+    [HttpGet("filter")]
+    public async Task<ActionResult<IEnumerable<TransactionDTO>>> FilterTransactions(int userId, int? categoryId = null, DateTime? startDate = null, DateTime? endDate = null)
     {
-        var monthlyReport = await _context.Transactions
+        var query = _context.Transactions
+            .Include(t => t.Category)
+            .Include(t => t.User)
             .Where(t => t.UserId == userId)
-            .GroupBy(t => new { t.Date.Year, t.Date.Month })
-            .Select(g => new
-            {
-                Year = g.Key.Year,
-                Month = g.Key.Month,
-                TotalIncome = g.Where(t => t.TransactionType == TransactionType.Income).Sum(t => t.Amount),
-                TotalExpense = g.Where(t => t.TransactionType == TransactionType.Expense).Sum(t => t.Amount)
-            })
-            .OrderBy(r => r.Year)
-            .ThenBy(r => r.Month)
-            .ToListAsync();
+            .AsQueryable();
 
-        return Ok(monthlyReport);
+        if (categoryId.HasValue)
+        {
+            query = query.Where(t => t.CategoryId == categoryId.Value);
+        }
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            query = query.Where(t => t.Date >= startDate.Value && t.Date <= endDate.Value);
+        }
+        else if (startDate.HasValue)
+        {
+            query = query.Where(t => t.Date >= startDate.Value);
+        }
+        else if (endDate.HasValue)
+        {
+            query = query.Where(t => t.Date <= endDate.Value);
+        }
+
+        var transactions = await query.ToListAsync();
+
+        var transactionDtos = transactions.Select(t => new TransactionDTO
+        {
+            Amount = t.Amount,
+            Date = t.Date,
+            Description = t.Description,
+            CategoryId = t.CategoryId,
+            UserId = t.UserId,
+            TransactionType = t.TransactionType
+        }).ToList();
+
+        return Ok(transactionDtos);
     }
-
 }
