@@ -6,6 +6,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy.WithOrigins("http://localhost:8080")
+              .AllowCredentials()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
 
