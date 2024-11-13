@@ -18,6 +18,26 @@ const register = async (payload) => {
   }
 };
 
+const login = async (payload) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}login`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json' 
+        },
+        withCredentials: true 
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error during login', error);
+    throw error;
+  }
+};
+
 export default {
-  register
+  register,
+  login
 };

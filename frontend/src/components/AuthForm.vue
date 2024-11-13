@@ -2,9 +2,24 @@
   <div class="auth-form">
     <h2>{{ isLogin ? 'Login' : 'Register' }}</h2>
     <form @submit.prevent="handleSubmit">
-      <input v-model="username" placeholder="Username" required />
-      <input v-model="email" v-if="!isLogin" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
+      <input 
+        v-if="!isLogin" 
+        v-model="username" 
+        placeholder="Username" 
+        required 
+      />
+      <input 
+        v-model="email" 
+        type="email" 
+        placeholder="Email" 
+        required 
+      />
+      <input 
+        v-model="password" 
+        type="password" 
+        placeholder="Password" 
+        required 
+      />
       <button type="submit">{{ isLogin ? 'Login' : 'Register' }}</button>
     </form>
     <p v-if="message">{{ message }}</p>
@@ -34,27 +49,38 @@ export default {
       message: ''
     };
   },
-  methods: {
-    async handleSubmit() {
-      try {
-        let response;
-        if (this.isLogin) {
-          response = await authService.login(this.username, this.password);
-          this.message = 'Login successful!';
+methods: {
+  async handleSubmit() {
+    try {
+      let response;
+      if (this.isLogin) {
+        const payload = {
+          email: this.email,
+          password: this.password,
+        };
+        response = await authService.login(payload);
+        this.message = 'Login successful!';
+        
+        if (response.token) {
+          localStorage.setItem('token', response.token);
         } else {
-          response = await authService.register(this.username, this.email, this.password); 
-          this.message = 'Registration successful!';
+          this.message = 'Token not found in response';
         }
-
-        if (this.isLogin && response.data.token) {
-          localStorage.setItem('token', response.data.token); 
-        }
-      } catch (error) {
-        this.message = 'Something went wrong!';
-        console.error(error);
+      } else {
+        const payload = {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        };
+        response = await authService.register(payload);
+        this.message = 'Registration successful!';
       }
+    } catch (error) {
+      this.message = 'Something went wrong!';
+      console.error(error);
     }
   }
+}
 };
 </script>
 
