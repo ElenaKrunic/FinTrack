@@ -6,6 +6,8 @@ using Org.BouncyCastle.Crypto.Generators;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MailKit.Net.Smtp;
+using FinTrack.Interfaces;
 
 namespace FinTrack.Controllers;
 
@@ -15,11 +17,13 @@ public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IMailService _mailService;
 
-    public AuthController(AppDbContext context, IConfiguration configuration)
+    public AuthController(AppDbContext context, IConfiguration configuration, IMailService mailService)
     {
         _context = context;
         _configuration = configuration;
+        _mailService = mailService;
     }
 
     [HttpPost("register")]
@@ -86,10 +90,13 @@ public class AuthController : ControllerBase
 
         string resetToken = GeneratePasswordResetToken(user);
 
-        // ovde cu implementirati slanje mejla sa tokenom korisniku
-        // koristiti SendGrid biblioteku 
-        return Ok(new { resetToken, message = "Use this token to reset your password." });
+        var resetLink = $"https://FinTrack.com/resetPassword?token={resetToken}";
+        string emailBody = $"Click the link to reset your password: <a href='{resetLink}'>Reset Password</a>";
+        await _mailService.SendEmail(user.Email, "Password Reset Request", emailBody);
+
+        return Ok(new { message = "Reset password email sent." });
     }
+
 
     private string GeneratePasswordResetToken(User user)
     {

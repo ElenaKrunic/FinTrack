@@ -1,3 +1,5 @@
+using FinTrack.Interfaces;
+using FinTrack.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -40,6 +42,8 @@ builder.Services.AddControllers()
    {
        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
    });
+
+builder.Services.AddScoped<IMailService, MailService>();
 
 var app = builder.Build();
 
