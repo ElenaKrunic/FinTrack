@@ -16,20 +16,4 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !localStorage.getItem('token')) {
-    next('/login'); 
-  } else {
-    next(); 
-  }
-});
-
-router.beforeEach((to, from, next) => {
-  if ((to.path === '/login' || to.path === '/register') && localStorage.getItem('token')) {
-    next('/dashboard');
-  } else {
-    next();
-  }
-});
-
 export default router;
