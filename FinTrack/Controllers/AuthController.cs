@@ -77,8 +77,12 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid email or password.");
 
         string token = GenerateJwtToken(user);
+        int userId = user.Id;
 
-        return Ok(new { token });
+        return Ok(new
+        {
+            token, userId = userId
+        });
     }
 
     [HttpPost("forgotPassword")]

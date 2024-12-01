@@ -44,6 +44,8 @@ export default {
           }
         );
         localStorage.setItem("token", response.data.token);
+       localStorage.setItem("userId", response.data.userId);
+
         this.$router.push("/dashboard");
       } catch (error) {
         alert("Error logging in: " + error.response.data);
