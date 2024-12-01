@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h3 class="text-xl font-bold mb-4">Transactions</h3>
+      <h3 class="text-xl font-bold mb-4">Filter transactions</h3>
       <div class="flex gap-4 mb-4">
         <input 
           v-model="filters.startDate" 

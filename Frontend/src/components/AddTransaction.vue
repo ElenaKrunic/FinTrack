@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h3 class="text-xl font-bold mb-4">Add Transaction</h3>
+      <h3 class="text-xl font-bold mb-4">Add new transaction</h3>
       <form @submit.prevent="addTransaction">
         <div class="mb-4">
           <input 
@@ -45,7 +45,7 @@
   
         <button 
           type="submit" 
-          class="bg-teal-500 text-white p-2 rounded w-full"
+          class="bg-teal-500 text-white p-2 rounded"
         >
           Add Transaction
         </button>

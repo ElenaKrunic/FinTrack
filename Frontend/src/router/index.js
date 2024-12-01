@@ -3,12 +3,23 @@ import HomePage from '../components/HomePage.vue';
 import Register from '../components/RegisterPage.vue';
 import Login from '../components/LoginPage.vue';
 import Dashboard from '../components/DashboardPage.vue';
+import LayoutWithSidebar from '../components/LayoutWithSidebar.vue';
 
 const routes = [
   { path: '/', component: HomePage }, 
   { path: '/register', component: Register },
   { path: '/login', component: Login },
-  { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } },
+  {
+    path: '/dashboard',
+    component: LayoutWithSidebar, 
+    children: [
+      {
+        path: '',
+        component: Dashboard, 
+      },
+    ],
+    meta: { requiresAuth: true }, 
+  },
 ];
 
 const router = createRouter({
