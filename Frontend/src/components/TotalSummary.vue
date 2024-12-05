@@ -7,6 +7,7 @@
   
   <script>
   import axios from "axios";
+  import { transaction_api } from "@/config/api";
   
   export default {
     data() {
@@ -22,8 +23,8 @@
       async fetchTotals() {
         try {
         const userId = localStorage.getItem("userId");
-        const incomeResponse = await axios.get(`http://localhost:5194/api/transaction/totalIncome/${userId}`);
-        const expensesResponse = await axios.get(`http://localhost:5194/api/transaction/totalExpenses/${userId}`);
+        const incomeResponse = await axios.get(`${transaction_api}/totalIncome/${userId}`);
+        const expensesResponse = await axios.get(`${transaction_api}/totalExpenses/${userId}`);
         
         this.totalIncome = incomeResponse.data;
         this.totalExpenses = expensesResponse.data;

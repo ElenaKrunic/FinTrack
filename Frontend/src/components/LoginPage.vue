@@ -30,6 +30,7 @@
 
 <script>
 import axios from "axios";
+import { auth_api } from "@/config/api";
 
 export default {
   data() {
@@ -48,7 +49,7 @@ export default {
     async loginUser() {
       try {
         const response = await axios.post(
-          "http://localhost:5194/api/auth/login",
+          `${auth_api}/login`,
           {
             email: this.email,
             password: this.password,

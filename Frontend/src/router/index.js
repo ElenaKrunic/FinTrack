@@ -4,11 +4,13 @@ import Register from '../components/RegisterPage.vue';
 import Login from '../components/LoginPage.vue';
 import Dashboard from '../components/DashboardPage.vue';
 import LayoutWithSidebar from '../components/LayoutWithSidebar.vue';
+import CategoriesPage from '../components/CategoriesPage.vue'; 
 
 const routes = [
   { path: '/', component: HomePage }, 
   { path: '/register', component: Register },
   { path: '/login', component: Login },
+  { path: '/categories', component: CategoriesPage },
   {
     path: '/dashboard',
     component: LayoutWithSidebar, 

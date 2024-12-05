@@ -55,7 +55,8 @@
   
   <script>
   import axios from "axios";
-  
+  import { category_api, transaction_api } from "@/config/api";
+
   export default {
     data() {
       return {
@@ -74,7 +75,7 @@
     methods: {
       async fetchCategories() {
         try {
-          const response = await axios.get('http://localhost:5194/api/category');
+          const response = await axios.get(`${category_api}`);
           this.categories = response.data.$values;
         } catch (error) {
           console.error("Error fetching categories:", error);
@@ -83,7 +84,7 @@
       async addTransaction() {
         try {
           const userId = localStorage.getItem("userId");
-          await axios.post('http://localhost:5194/api/transaction', {
+          await axios.post(`${transaction_api}`, {
             ...this.transaction,
             userId,
           });
