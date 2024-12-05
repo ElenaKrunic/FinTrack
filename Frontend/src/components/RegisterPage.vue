@@ -62,6 +62,7 @@
 
 <script>
 import axios from "axios";
+import { auth_api } from "@/config/api";
 
 export default {
   data() {
@@ -81,7 +82,7 @@ export default {
     async registerUser() {
       try {
         const response = await axios.post(
-          "http://localhost:5194/api/auth/register",
+          `${auth_api}/register`,
           {
             username: this.username,
             email: this.email,

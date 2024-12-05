@@ -31,7 +31,8 @@
   
   <script>
   import axios from "axios";
-  
+  import { transaction_api } from "@/config/api";
+
   export default {
     data() {
       return {
@@ -47,7 +48,7 @@
         try {
           const userId = localStorage.getItem("userId");
           const { startDate, endDate } = this.filters;
-          const response = await axios.get('http://localhost:5194/api/transaction/filter', {
+          const response = await axios.get(`${transaction_api}/filter`, {
             params: {
               userId,
               startDate,
